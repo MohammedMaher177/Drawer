@@ -1,9 +1,21 @@
 import { useDrop } from "react-dnd";
-import { Stage, Layer, Rect, Circle, Line } from "react-konva";
+import { Stage, Layer, Rect, Circle, Line, Text, Group } from "react-konva";
 import PropTypes from "prop-types";
 import { ShapeTypes } from "../data/shapeTypes.js";
+import { useContext } from "react";
+import { textContext } from "../../context/text-context.jsx";
 
-const Board = ({ shapes, onDrop }) => {
+const Board = ({
+  shapes,
+  onDrop,
+  lines,
+  handleShapeClick,
+  handleShapeDragMove,
+}) => {
+  const { texts } = useContext(textContext);
+  const handleHover = (id) => {
+    id;
+  };
   const [, drop] = useDrop({
     accept: Object.values(ShapeTypes),
     drop: (item, monitor) => {
@@ -20,51 +32,127 @@ const Board = ({ shapes, onDrop }) => {
             switch (shape.type) {
               case ShapeTypes.RECTANGLE:
                 return (
-                  <Rect
-                    key={index}
-                    x={shape.x - 50}
-                    y={shape.y}
-                    width={100}
-                    height={50}
-                    fill="blue"
-                  />
+                  <Group key={shape.id} draggable onDragMove={(e) =>
+                        handleShapeDragMove(shape.id, e.target.position())
+                      }>
+                    <Rect
+                      x={shape.x - 50}
+                      y={shape.y}
+                      fill="blue"
+                      id={shape.id}
+                      text={shape.id}
+                      width={shape.width}
+                      height={shape.height}
+                      onClick={() => handleShapeClick(shape.id)}
+                      
+                    />
+                    <Text
+                      text={`ID: ${shape.id}`}
+                      x={shape.x - 50}
+                      y={shape.y - 20}
+                      fontSize={12}
+                    />
+                  </Group>
                 );
               case ShapeTypes.CIRCLE:
                 return (
-                  <Circle
-                    key={index}
-                    x={shape.x}
-                    y={shape.y}
-                    radius={50}
-                    fill="red"
-                  />
+                  <Group key={shape.id} draggable onDragMove={(e) =>
+                    handleShapeDragMove(shape.id, e.target.position())
+                  }>
+                    <Circle
+                      key={index}
+                      x={shape.x}
+                      y={shape.y}
+                      radius={shape.width / 2}
+                      fill="red"
+                      id={shape.id}
+                      text={shape.id}
+                      onClick={() => handleShapeClick(shape.id)}
+                      onMouseEnter={() => handleHover(shape.id)}
+                      
+                    />
+                    <Text
+                      text={`ID: ${shape.id}`}
+                      x={shape.x - 30}
+                      y={shape.y - 30}
+                      fontSize={12}
+                    />
+                  </Group>
                 );
               case ShapeTypes.SQUARE:
                 return (
-                  <Rect
-                    key={index}
-                    x={shape.x}
-                    y={shape.y}
-                    width={50}
-                    height={50}
-                    fill="green"
-                  />
+                  <Group key={shape.id} draggable onDragMove={(e) =>
+                    handleShapeDragMove(shape.id, e.target.position())
+                  }>
+                    <Rect
+                      key={index}
+                      x={shape.x}
+                      y={shape.y}
+                      width={shape.width}
+                      height={shape.height}
+                      onClick={() => handleShapeClick(shape.id)}
+                      fill="green"
+                      id={shape.id}
+                      text={shape.id}
+                      
+                    />
+                    <Text
+                      text={`ID: ${shape.id}`}
+                      x={shape.x}
+                      y={shape.y - 15}
+                      fontSize={12}
+                    />
+                  </Group>
                 );
               case ShapeTypes.TRIANGLE:
                 return (
-                  <Line
-                    key={index}
-                    x={shape.x}
-                    y={shape.y}
-                    points={[0, 0, 50, -100, 100, 0]}
-                    closed
-                    fill="yellow"
-                  />
+                  <Group key={shape.id} draggable onDragMove={(e) =>
+                    handleShapeDragMove(shape.id, e.target.position())
+                  }>
+                    <Line
+                      key={index}
+                      x={shape.x}
+                      y={shape.y}
+                      points={[0, 0, 25, -50, 50, 0]}
+                      onClick={() => handleShapeClick(shape.id)}
+                      closed
+                      fill="yellow"
+                      id={shape.id}
+                      text={shape.id}
+                      
+                    />
+                    <Text
+                      text={`ID: ${shape.id}`}
+                      x={shape.x - 10}
+                      y={shape.y - 60}
+                      fontSize={12}
+                    />
+                  </Group>
                 );
               default:
                 return null;
             }
           })}
+          {texts.map((text) => (
+            <Text
+              key={text.id}
+              id={text.id}
+              x={text.x}
+              y={text.y}
+              text={text.text}
+              fontSize={text.fontSize}
+              fill={text.fill}
+              draggable
+            />
+          ))}
+          {lines.map((line, index) => (
+            <Line
+              key={index}
+              points={line.points}
+              stroke={line.stroke}
+              strokeWidth={line.strokeWidth}
+            />
+          ))}
         </Layer>
       </Stage>
     </div>
@@ -73,13 +161,16 @@ const Board = ({ shapes, onDrop }) => {
 
 Board.propTypes = {
   shapes: PropTypes.array,
+  lines: PropTypes.array,
   onDrop: PropTypes.func,
+  handleShapeClick: PropTypes.func,
+  handleShapeDragMove: PropTypes.func,
 };
 
 export default Board;
 
-
-{/* <Star
+{
+  /* <Star
   key={index}
   id={shape.id}
   x={shape.x}
@@ -94,4 +185,5 @@ export default Board;
   shadowColor="black"
   shadowBlur={10}
   shadowOpacity={0.6}
-/>; */}
+/>; */
+}

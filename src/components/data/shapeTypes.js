@@ -3,4 +3,5 @@ export const ShapeTypes = {
   CIRCLE: "circle",
   SQUARE: "square",
   TRIANGLE: "triangle",
+  TEXT: "text",
 };

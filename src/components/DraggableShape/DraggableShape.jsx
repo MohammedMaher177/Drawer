@@ -11,7 +11,7 @@ const DraggableShape = ({ shapeType, children }) => {
   });
 
   return (
-    <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
+    <div ref={drag} style={{ borderRadius: "50%", width: "fit-content", opacity: isDragging ? 0.5 : 1 }}>
       {children}
     </div>
   );

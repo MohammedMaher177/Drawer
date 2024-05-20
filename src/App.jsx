@@ -1,13 +1,15 @@
-import './App.css'
-import Main from './pages/Main/Main.jsx'
+import "./App.css";
+import  TextContextProvider  from "./context/text-context.jsx";
+import Main from "./pages/Main/Main.jsx";
 
 function App() {
-
   return (
     <>
-      <Main />
+      <TextContextProvider>
+        <Main />
+      </TextContextProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
