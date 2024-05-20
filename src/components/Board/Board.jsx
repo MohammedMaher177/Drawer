@@ -1,29 +1,43 @@
 import { useDrop } from "react-dnd";
-import { Stage, Layer, Rect, Circle, Line, Text, Group, Arrow } from "react-konva";
-import PropTypes from "prop-types";
+import {
+  Stage,
+  Layer,
+  Rect,
+  Circle,
+  Line,
+  Text,
+  Group,
+  Arrow,
+} from "react-konva";
 import { ShapeTypes } from "../data/shapeTypes.js";
 import { useContext } from "react";
-import { textContext } from "../../context/text-context.jsx";
+import { mainContext } from "../../context/main-context.jsx";
 
-const Board = ({
-  shapes,
-  onDrop,
-  lines,
-  handleShapeClick,
-  handleShapeDragMove,
-  handleShapeMouseEnter,
-  handleShapeMouseLeave,
-}) => {
-  const { texts } = useContext(textContext);
+const Board = () => {
+  const {
+    texts,
+    handleDrop: onDrop,
+    lines,
+    shapes,
+    handleShapeClick,
+    handleShapeDragMove,
+    handleShapeMouseEnter,
+    handleShapeMouseLeave,
+    updatePosition,
+  } = useContext(mainContext);
 
   const [, drop] = useDrop({
     accept: Object.values(ShapeTypes),
     drop: (item, monitor) => {
       const delta = monitor.getClientOffset();
       onDrop(item.shapeType, delta.x, delta.y);
+      const offset = monitor.getClientOffset();
+      if (offset) {
+        updatePosition(item.id, offset.x, offset.y);
+      }
+      return { x: offset.x, y: offset.y };
     },
   });
-
   return (
     <div ref={drop}>
       <Stage width={window.innerWidth} height={window.innerHeight}>
@@ -34,7 +48,7 @@ const Board = ({
                 return (
                   <Group
                     key={shape.id}
-                    draggable
+                    // draggable
                     onDragMove={(e) =>
                       handleShapeDragMove(shape.id, e.target.position())
                     }
@@ -65,7 +79,7 @@ const Board = ({
                 return (
                   <Group
                     key={shape.id}
-                    draggable
+                    // draggable
                     onDragMove={(e) =>
                       handleShapeDragMove(shape.id, e.target.position())
                     }
@@ -96,7 +110,7 @@ const Board = ({
                 return (
                   <Group
                     key={shape.id}
-                    draggable
+                    // draggable
                     onDragMove={(e) =>
                       handleShapeDragMove(shape.id, e.target.position())
                     }
@@ -128,7 +142,7 @@ const Board = ({
                 return (
                   <Group
                     key={shape.id}
-                    draggable
+                    // draggable
                     onDragMove={(e) =>
                       handleShapeDragMove(shape.id, e.target.position())
                     }
@@ -169,7 +183,7 @@ const Board = ({
               text={text.text}
               fontSize={text.fontSize}
               fill={text.fill}
-              draggable
+              // draggable
             />
           ))}
           {lines.map((line, index) => (
@@ -189,16 +203,6 @@ const Board = ({
   );
 };
 
-Board.propTypes = {
-  shapes: PropTypes.array,
-  lines: PropTypes.array,
-  onDrop: PropTypes.func,
-  handleShapeClick: PropTypes.func,
-  handleShapeDragMove: PropTypes.func,
-  handleShapeMouseEnter: PropTypes.func,
-  handleShapeMouseLeave: PropTypes.func,
-};
-
 export default Board;
 
 {
@@ -212,7 +216,7 @@ export default Board;
   outerRadius={40}
   fill="#89b717"
   opacity={0.8}
-  draggable
+  // draggable
   rotation="0"
   shadowColor="black"
   shadowBlur={10}

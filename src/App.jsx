@@ -1,13 +1,13 @@
 import "./App.css";
-import  TextContextProvider  from "./context/text-context.jsx";
+import MainContextProvider from "./context/main-context.jsx";
 import Main from "./pages/Main/Main.jsx";
 
 function App() {
   return (
     <>
-      <TextContextProvider>
+      <MainContextProvider>
         <Main />
-      </TextContextProvider>
+      </MainContextProvider>
     </>
   );
 }

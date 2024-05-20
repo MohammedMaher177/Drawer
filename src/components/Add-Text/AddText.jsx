@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import { textContext } from "../../context/text-context.jsx";
 import styles from "./addtext.module.css";
 import { randomId } from "../../util/util.js";
+import { mainContext } from "../../context/main-context.jsx";
 export default function AddText() {
-  const { texts, setTexts } = useContext(textContext);
+  const { texts, setTexts } = useContext(mainContext);
   const [textInput, setTextInput] = useState("");
 
   const addText = () => {
