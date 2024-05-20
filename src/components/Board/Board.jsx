@@ -1,5 +1,5 @@
 import { useDrop } from "react-dnd";
-import { Stage, Layer, Rect, Circle, Line, Text, Group } from "react-konva";
+import { Stage, Layer, Rect, Circle, Line, Text, Group, Arrow } from "react-konva";
 import PropTypes from "prop-types";
 import { ShapeTypes } from "../data/shapeTypes.js";
 import { useContext } from "react";
@@ -11,11 +11,11 @@ const Board = ({
   lines,
   handleShapeClick,
   handleShapeDragMove,
+  handleShapeMouseEnter,
+  handleShapeMouseLeave,
 }) => {
   const { texts } = useContext(textContext);
-  const handleHover = (id) => {
-    id;
-  };
+
   const [, drop] = useDrop({
     accept: Object.values(ShapeTypes),
     drop: (item, monitor) => {
@@ -32,9 +32,13 @@ const Board = ({
             switch (shape.type) {
               case ShapeTypes.RECTANGLE:
                 return (
-                  <Group key={shape.id} draggable onDragMove={(e) =>
-                        handleShapeDragMove(shape.id, e.target.position())
-                      }>
+                  <Group
+                    key={shape.id}
+                    draggable
+                    onDragMove={(e) =>
+                      handleShapeDragMove(shape.id, e.target.position())
+                    }
+                  >
                     <Rect
                       x={shape.x - 50}
                       y={shape.y}
@@ -44,7 +48,10 @@ const Board = ({
                       width={shape.width}
                       height={shape.height}
                       onClick={() => handleShapeClick(shape.id)}
-                      
+                      onMouseEnter={() => handleShapeMouseEnter(shape.id)}
+                      onMouseLeave={() => handleShapeMouseLeave(shape.id)}
+                      stroke={shape.strokeEnabled ? "black" : null}
+                      strokeWidth={shape.strokeEnabled ? 2 : 0}
                     />
                     <Text
                       text={`ID: ${shape.id}`}
@@ -56,9 +63,13 @@ const Board = ({
                 );
               case ShapeTypes.CIRCLE:
                 return (
-                  <Group key={shape.id} draggable onDragMove={(e) =>
-                    handleShapeDragMove(shape.id, e.target.position())
-                  }>
+                  <Group
+                    key={shape.id}
+                    draggable
+                    onDragMove={(e) =>
+                      handleShapeDragMove(shape.id, e.target.position())
+                    }
+                  >
                     <Circle
                       key={index}
                       x={shape.x}
@@ -68,8 +79,10 @@ const Board = ({
                       id={shape.id}
                       text={shape.id}
                       onClick={() => handleShapeClick(shape.id)}
-                      onMouseEnter={() => handleHover(shape.id)}
-                      
+                      onMouseEnter={() => handleShapeMouseEnter(shape.id)}
+                      onMouseLeave={() => handleShapeMouseLeave(shape.id)}
+                      stroke={shape.strokeEnabled ? "black" : null}
+                      strokeWidth={shape.strokeEnabled ? 2 : 0}
                     />
                     <Text
                       text={`ID: ${shape.id}`}
@@ -81,20 +94,27 @@ const Board = ({
                 );
               case ShapeTypes.SQUARE:
                 return (
-                  <Group key={shape.id} draggable onDragMove={(e) =>
-                    handleShapeDragMove(shape.id, e.target.position())
-                  }>
+                  <Group
+                    key={shape.id}
+                    draggable
+                    onDragMove={(e) =>
+                      handleShapeDragMove(shape.id, e.target.position())
+                    }
+                  >
                     <Rect
                       key={index}
                       x={shape.x}
                       y={shape.y}
                       width={shape.width}
                       height={shape.height}
-                      onClick={() => handleShapeClick(shape.id)}
                       fill="green"
                       id={shape.id}
                       text={shape.id}
-                      
+                      onClick={() => handleShapeClick(shape.id)}
+                      onMouseEnter={() => handleShapeMouseEnter(shape.id)}
+                      onMouseLeave={() => handleShapeMouseLeave(shape.id)}
+                      stroke={shape.strokeEnabled ? "black" : null}
+                      strokeWidth={shape.strokeEnabled ? 2 : 0}
                     />
                     <Text
                       text={`ID: ${shape.id}`}
@@ -106,9 +126,13 @@ const Board = ({
                 );
               case ShapeTypes.TRIANGLE:
                 return (
-                  <Group key={shape.id} draggable onDragMove={(e) =>
-                    handleShapeDragMove(shape.id, e.target.position())
-                  }>
+                  <Group
+                    key={shape.id}
+                    draggable
+                    onDragMove={(e) =>
+                      handleShapeDragMove(shape.id, e.target.position())
+                    }
+                  >
                     <Line
                       key={index}
                       x={shape.x}
@@ -119,7 +143,10 @@ const Board = ({
                       fill="yellow"
                       id={shape.id}
                       text={shape.id}
-                      
+                      onMouseEnter={() => handleShapeMouseEnter(shape.id)}
+                      onMouseLeave={() => handleShapeMouseLeave(shape.id)}
+                      stroke={shape.strokeEnabled ? "black" : null}
+                      strokeWidth={shape.strokeEnabled ? 2 : 0}
                     />
                     <Text
                       text={`ID: ${shape.id}`}
@@ -146,11 +173,14 @@ const Board = ({
             />
           ))}
           {lines.map((line, index) => (
-            <Line
+            <Arrow
               key={index}
-              points={line.points}
+              points={[line.start.x, line.start.y, line.end.x, line.end.y]}
               stroke={line.stroke}
+              fill={line.stroke}
               strokeWidth={line.strokeWidth}
+              pointerLength={10}
+              pointerWidth={10}
             />
           ))}
         </Layer>
@@ -165,6 +195,8 @@ Board.propTypes = {
   onDrop: PropTypes.func,
   handleShapeClick: PropTypes.func,
   handleShapeDragMove: PropTypes.func,
+  handleShapeMouseEnter: PropTypes.func,
+  handleShapeMouseLeave: PropTypes.func,
 };
 
 export default Board;

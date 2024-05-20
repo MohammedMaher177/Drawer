@@ -16,7 +16,6 @@ export default function Main() {
   const [lines, setLines] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState(null);
 
-
   const handleDrop = (shapeType, x, y) => {
     const size =
       shapeType == "circle"
@@ -46,6 +45,14 @@ export default function Main() {
           +shape2.x + +shape2.width / 2,
           +shape2.y + +shape2.height / 2,
         ],
+        start: {
+          x: shape1.x + shape1.width / 2,
+          y: shape1.y + shape1.height / 2,
+        },
+        end: {
+          x: shape2.x + shape2.width / 2,
+          y: shape2.y + shape2.height / 2,
+        },
         stroke: "black",
         strokeWidth: 2,
       };
@@ -55,25 +62,50 @@ export default function Main() {
   };
 
   const handleShapeDragMove = (shapeId, newPosition) => {
-    const updatedLines = lines.map(line => {
-      const [startShapeId, endShapeId] = line.id.split('-');
+    const updatedLines = lines.map((line) => {
+      const [startShapeId, endShapeId] = line.id.split("-");
       if (startShapeId === shapeId) {
-        line.points[0] =( newPosition.x + shapes.find(shape => shape.id === shapeId).width / 2) ;
-        line.points[1] = (newPosition.y + shapes.find(shape => shape.id === shapeId).height / 2);
+        line.start = {
+          x:
+            newPosition.x +
+            shapes.find((shape) => shape.id === shapeId).width / 2,
+          y:
+            newPosition.y +
+            shapes.find((shape) => shape.id === shapeId).height / 2,
+        };
       } else if (endShapeId === shapeId) {
-        line.points[2] = (newPosition.x + shapes.find(shape => shape.id === shapeId).width / 2) ;
-        line.points[3] = (newPosition.y + shapes.find(shape => shape.id === shapeId).height / 2);
+        line.end = {
+          x:
+            newPosition.x +
+            shapes.find((shape) => shape.id === shapeId).width / 2,
+          y:
+            newPosition.y +
+            shapes.find((shape) => shape.id === shapeId).height / 2,
+        };
       }
       return line;
     });
     setLines(updatedLines);
   };
-
+  const handleShapeMouseLeave = (id) => {
+    const updatedShapes = shapes.map((shape) =>
+      shape.id === id ? { ...shape, strokeEnabled: false } : shape
+    );
+    setShapes(updatedShapes);
+  };
+  const handleShapeMouseEnter = (id) => {
+    const updatedShapes = shapes.map((shape) =>
+      shape.id === id ? { ...shape, strokeEnabled: true } : shape
+    );
+    setShapes(updatedShapes);
+  };
 
   const handleShapeClick = (shapeId) => {
-    selectedShapeId
-      ? connectShapes(selectedShapeId, shapeId)
-      : setSelectedShapeId(shapeId);
+    if (selectedShapeId) {
+      connectShapes(selectedShapeId, shapeId);
+    } else {
+      setSelectedShapeId(shapeId);
+    }
   };
   return (
     <DndProvider backend={HTML5Backend}>
@@ -103,6 +135,8 @@ export default function Main() {
             lines={lines}
             handleShapeClick={handleShapeClick}
             handleShapeDragMove={handleShapeDragMove}
+            handleShapeMouseEnter={handleShapeMouseEnter}
+            handleShapeMouseLeave={handleShapeMouseLeave}
           />
         </div>
       </div>
