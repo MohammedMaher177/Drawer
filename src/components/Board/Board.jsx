@@ -183,7 +183,7 @@ const Board = () => {
               text={text.text}
               fontSize={text.fontSize}
               fill={text.fill}
-              // draggable
+              draggable
             />
           ))}
           {lines.map((line, index) => (
